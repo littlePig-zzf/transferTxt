@@ -1,4 +1,4 @@
-import { readFile, writeFile, readdir} from 'fs';
+import { readFile, writeFile, readdir, mkdir } from 'fs';
 
 let res = ''
 let dir = './assets'
@@ -8,6 +8,11 @@ readdir(dir, function(err, data){
     console.log('⛔请先添加字幕txt文件')
     return
   }
+  mkdir('./target', function (err) {
+    if (!err) {
+      console.log('创建目标文件夹成功 🎉');
+    }
+  })
   data?.map((item) => {
     readFile(`${dir}/${item}`,'utf-8',function(err,data){
       if(err){
