@@ -5,7 +5,7 @@
 
 ## 一、首先 执行npm install 安装依赖
 
-## 二、执行 node createDir.js, 创建存放原始数据的文件夹（与xlsx表格的底部tab命名相同）
+## 二、执行 node createDir.js, 在srt文件里，会创建存放原始数据的文件夹（与xlsx表格的底部tab命名相同）
 
 ## 三、需要处理的srt文件放在对应的文件夹里
 
