@@ -17,60 +17,57 @@ mkdir(target, function (err) {
   }
 })
 
-const result = new Promise((resolve, reject) => {
-  sheets.map((citem, cindex) => {
-    readdir(`${dir}/${citem.name}`, function(err, data){
-      if(data?.length === 0) {
-        console.log('⛔请先添加字幕srt文件')
-        return
+sheets.map((citem, cindex) => {
+  readdir(`${dir}/${citem.name}`, function(err, data){
+    if(data?.length === 0) {
+      console.log('⛔请先添加字幕srt文件')
+      return
+    }
+    if (err) {
+      console.log(err);
+      return
+    }
+    mkdir(`${target}/${citem.name}`, function (err) {
+      if (!err) {
+        console.log('创建目标文件夹成功 🎉');
       }
-      if (err) {
-        console.log(err);
-        return
-      }
-      mkdir(`${target}/${citem.name}`, function (err) {
-        if (!err) {
-          console.log('创建目标文件夹成功 🎉');
-        }
-      })
-      return new Promise((resolve, reject) => {
-        data.map((item, index) => {
-          readFile(`${dir}/${citem.name}/${item}`,'utf-8',function(err,cdata){
-            res = cdata.split(/\n\s\n/).filter(citem => citem != "").map((ccitem) => {
-                let textItem = ccitem.split(/\n/);
-                return  textItem[2]?.replace('\r', '')
-            })
-            res = res.join(',')
-            // 处理写进xlsx的数据
-            const name = item.split('.')[0]
-            const index = citem.data.findIndex((ccitem) => {
-              return ccitem[0] === name
-            })
-            sheets[cindex].data[index][2] = res
-            // 生成txt文件--(如果直接生成新的xlsx， 下面这步可去掉了)
-            writeFile(`${target}/${citem.name}/${item}`,res,function(err, data){
-              if(err)  console.log(item + ' 写入失败 💢 ' + err)
-              else {
-                console.log(item + ' 🎉');
-              }
-            })
-          })
-          index === data?.length -1 && resolve(true)
+    })
+    data.map((item, index) => {
+      readFile(`${dir}/${citem.name}/${item}`,'utf-8',function(err,cdata){
+        res = cdata.split(/\n\s\n/).filter(citem => citem != "").map((ccitem) => {
+            let textItem = ccitem.split(/\n/);
+            return  textItem[2]?.replace('\r', '')
+        })
+        res = res.join(',')
+        // 处理写进xlsx的数据
+        const name = item.split('.')[0]
+        const avticeIndex = citem.data.findIndex((ccitem) => {
+          return ccitem[0] === name
+        })
+        sheets[cindex].data[avticeIndex][2] = res
+        // 生成txt文件--(如果直接生成新的xlsx， 下面这步可去掉了)
+        writeFile(`${target}/${citem.name}/${item}`,res,function(err, data){
+          if(err)  console.log(item + ' 写入失败 💢 ' + err)
+          else {
+            console.log(item + ' 🎉');
+          }
         })
       })
     })
-    cindex === sheets?.length -1 && resolve(true)
   })
 })
 
-if(result) {
+setTimeout(()=>{
   var buffer = build(sheets);
   writeFile('./修改后的文案.xlsx', buffer, function (err){
     if (err)
         throw err;
     console.log('Write to xls has finished 🎈');
   })
-}
+}, 3000)
+    
+
+
 
 
 
